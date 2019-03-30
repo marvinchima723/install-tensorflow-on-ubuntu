@@ -1,25 +1,68 @@
-https://gist.github.com/zhanwenchen/e520767a409325d9961072f666815bb8
-
-https://medium.com/@zhanwenchen/install-cuda-and-cudnn-for-tensorflow-gpu-on-ubuntu-79306e4ac04e
-cudnn cannot make: https://devtalk.nvidia.com/default/topic/1025801/cudnn/cudnn-test-did-not-pass/
-
-install cuda 9
+# remove cuda 9
 
 sudo apt-get --purge remove cuda
 sudo apt autoremove
-to remove cuda 9.0
-
-Then
 sudo apt-get clean
-to clear apt-cache
-
-Then I do
-sudo dpkg -i cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64.deb
-sudo apt-get update
-sudo apt-get install cuda-9-0
 
 # create virtualenv nm=tensorflow
+
+1. Install NVIDIA Graphics Driver via apt-get
+sudo apt-get install nvidia-418 nvidia-modprobe
+
+
+2. Install CUDA 9.0 via Runfile
+$ cd
+$ wget https://developer.nvidia.com/compute/cuda/9.0/Prod/local_installers/cuda_9.0.176_384.81_linux-run
+$ chmod +x cuda_9.0.176_384.81_linux-run
+$ ./cuda_9.0.176_384.81_linux-run --extract=$HOME
+$ sudo ./cuda-linux.9.0.176-22781540.run
+$ sudo ./cuda-samples.9.0.176-22781540-linux.run
+$ sudo bash -c "echo /usr/local/cuda/lib64/ > /etc/ld.so.conf.d/cuda.conf"
+$ sudo ldconfig
+
+# It is also recommended for Ubuntu users to append string /usr/local/cuda/bin to system 
+# file /etc/environment so that nvcc will be included in $PATH. This will take effect after reboot. 
+# To do that, you just have to:
+
+$ sudo nano /etc/environment
+# and then add :/usr/local/cuda/bin (including the ":") at the end of the PATH="/blah:/blah/blah" string (inside the quotes).
+# After a reboot, let's test our installation by making and invoking our tests:
+
+$ cd /usr/local/cuda-9.0/samples
+$ sudo make
+$ cd /usr/local/cuda/samples/bin/x86_64/linux/release
+$ ./deviceQuery
+
+
+3. install cudnn
+# Go to the cuDNN download page (need registration) and select the latest cuDNN 7.0.* version made for CUDA 9.0.
+# Download all 3 .deb files: the runtime library, the developer library, and the code samples library for Ubuntu 16.04.
+
+cd 
+cd /Download
+$ sudo dpkg -i libcudnn7_7.0.5.15–1+cuda9.0_amd64.deb 
+$ sudo dpkg -i libcudnn7-dev_7.0.5.15–1+cuda9.0_amd64.deb
+$ sudo dpkg -i libcudnn7-doc_7.0.5.15–1+cuda9.0_amd64.deb 
+
+cp -r /usr/src/cudnn_samples_v7/ ~
+cd ~/cudnn_samples_v7/mnistCUDNN
+
+nano /usr/include/cudnn.h
+# And I changed the line: #include "driver_types.h" to #include <driver_types.h
+
+make clean && make
+./mnistCUDNN
+
+# put the following line in the end or your .bashrc file
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64"
+source ~/.bashrc
+
+# install tensorflow 1.12
 pip install https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.12.0-cp36-cp36m-linux_x86_64.whl
 
 
-## 1. Install NVIDIA Graphics Driver via apt-get
+
+Reference:
+https://gist.github.com/zhanwenchen/e520767a409325d9961072f666815bb8
+https://medium.com/@zhanwenchen/install-cuda-and-cudnn-for-tensorflow-gpu-on-ubuntu-79306e4ac04e
+cudnn cannot make: https://devtalk.nvidia.com/default/topic/1025801/cudnn/cudnn-test-did-not-pass/
