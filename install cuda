@@ -1,5 +1,8 @@
 https://gist.github.com/zhanwenchen/e520767a409325d9961072f666815bb8
 
+https://medium.com/@zhanwenchen/install-cuda-and-cudnn-for-tensorflow-gpu-on-ubuntu-79306e4ac04e
+cudnn cannot make: https://devtalk.nvidia.com/default/topic/1025801/cudnn/cudnn-test-did-not-pass/
+
 install cuda 9
 
 sudo apt-get --purge remove cuda
@@ -14,3 +17,9 @@ Then I do
 sudo dpkg -i cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64.deb
 sudo apt-get update
 sudo apt-get install cuda-9-0
+
+# create virtualenv nm=tensorflow
+pip install https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.12.0-cp36-cp36m-linux_x86_64.whl
+
+
+## 1. Install NVIDIA Graphics Driver via apt-get
